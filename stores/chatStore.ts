@@ -1,3 +1,4 @@
+import { trimToContextWindow } from "@/services/context.service";
 import { nanoid } from "nanoid/non-secure";
 import { create } from "zustand";
 import { llamaService } from "../services/llama.service";
@@ -63,7 +64,6 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       createdAt: Date.now(),
     };
 
-    // placeholder for streaming assistant response
     const assistantMsg: Message = {
       id: nanoid(),
       role: "assistant",
@@ -72,7 +72,6 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       isGenerating: true,
     };
 
-    // add user message + empty assistant bubble
     set((s) => ({
       chats: s.chats.map((c) =>
         c.id === chatId
@@ -88,11 +87,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     const chat = get().getChat(chatId)!;
     // pass full message history for context — this is what keeps the AI "aware" of the conversation
-    const contextMessages = [...chat.messages.slice(0, -1)]; // exclude empty assistant placeholder
+    const contextMessages = trimToContextWindow(
+      chat.messages.slice(0, -1),
+      4096,
+      chat.systemPrompt,
+    );
 
     let fullResponse = "";
 
-    // stream tokens into the assistant bubble in real time
     await llamaService.generateStream(contextMessages, modelFamily, (token) => {
       fullResponse += token;
       set((s) => ({
@@ -111,7 +113,6 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       }));
     });
 
-    // mark generation done + persist
     const finalChat = get().getChat(chatId)!;
     const updatedChat: Chat = {
       ...finalChat,

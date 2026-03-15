@@ -6,7 +6,6 @@ class LlamaService {
   private loadedModelId: string | null = null;
 
   async loadModel(modelId: string, modelPath: string): Promise<void> {
-    // avoid reloading if same model is already in memory
     if (this.loadedModelId === modelId && this.context) return;
 
     // release previous context to free memory
@@ -17,10 +16,10 @@ class LlamaService {
 
     this.context = await initLlama({
       model: modelPath,
-      use_mlock: true, // lock model in RAM, prevent swapping
-      n_ctx: 4096, // context window size
-      n_threads: 4, // tune based on device
-      n_gpu_layers: 0, // 0 = CPU only; increase if device has GPU support
+      use_mlock: true,
+      n_ctx: 4096,
+      n_threads: 4,
+      n_gpu_layers: 0,
     });
 
     this.loadedModelId = modelId;
@@ -28,7 +27,6 @@ class LlamaService {
 
   // Converts your Message[] to the prompt format the model expects
   private formatPrompt(messages: Message[], modelFamily: string): string {
-    // each model family has its own chat template
     if (modelFamily === "gemma") {
       return (
         messages
@@ -83,7 +81,6 @@ class LlamaService {
         stop: ["<end_of_turn>", "<|eot_id|>", "</s>"],
       },
       (data) => {
-        // this callback fires for every token
         onToken?.(data.token);
       },
     );
