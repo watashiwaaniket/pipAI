@@ -56,7 +56,12 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}
+    >
       <ScanlineOverlay />
       <PipStatusBar title="CONFIG" modelName={activeModel?.name} />
 
@@ -87,7 +92,10 @@ export default function SettingsScreen() {
           <Switch
             value={settings.scanlineEnabled}
             onValueChange={(v) => updateSettings({ scanlineEnabled: v })}
-            trackColor={{ false: t.colors.primaryMuted, true: t.colors.primary }}
+            trackColor={{
+              false: t.colors.primaryMuted,
+              true: t.colors.primary,
+            }}
             thumbColor={t.colors.bg}
           />
         </View>
@@ -96,7 +104,10 @@ export default function SettingsScreen() {
           <Switch
             value={settings.streamingEnabled}
             onValueChange={(v) => updateSettings({ streamingEnabled: v })}
-            trackColor={{ false: t.colors.primaryMuted, true: t.colors.primary }}
+            trackColor={{
+              false: t.colors.primaryMuted,
+              true: t.colors.primary,
+            }}
             thumbColor={t.colors.bg}
           />
         </View>
@@ -117,7 +128,8 @@ export default function SettingsScreen() {
               <Text
                 style={[
                   styles.speedBtnText,
-                  settings.typewriterSpeed === speed && styles.speedBtnTextActive,
+                  settings.typewriterSpeed === speed &&
+                    styles.speedBtnTextActive,
                 ]}
               >
                 {speed}
@@ -136,10 +148,7 @@ export default function SettingsScreen() {
           placeholderTextColor={t.colors.primaryMuted}
           selectionColor={t.colors.primary}
         />
-        <TouchableOpacity
-          style={styles.actionBtn}
-          onPress={resetSettings}
-        >
+        <TouchableOpacity style={styles.actionBtn} onPress={resetSettings}>
           <Text style={styles.actionBtnText}>[ RESET SETTINGS ]</Text>
         </TouchableOpacity>
 
@@ -156,16 +165,20 @@ export default function SettingsScreen() {
           <Text style={styles.infoLabel}>INFERENCE</Text>
           <Text style={styles.infoValue}>llama.rn / llama.cpp</Text>
         </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>MADE BY</Text>
+          <Text style={styles.infoValue}>hisukurifu/@astriknormal</Text>
+        </View>
 
-        <Text style={[styles.section, styles.dangerSection]}>{">"} DANGER ZONE</Text>
-        <TouchableOpacity
-          style={styles.dangerBtn}
-          onPress={handleFactoryReset}
-        >
+        <Text style={[styles.section, styles.dangerSection]}>
+          {">"} DANGER ZONE
+        </Text>
+        <TouchableOpacity style={styles.dangerBtn} onPress={handleFactoryReset}>
           <Text style={styles.dangerBtnText}>[ FACTORY RESET ]</Text>
         </TouchableOpacity>
         <Text style={styles.dangerHint}>
-          Clears all settings, chats, and removes active model — cannot be undone.
+          Clears all settings, chats, and removes active model — cannot be
+          undone.
         </Text>
       </ScrollView>
     </View>

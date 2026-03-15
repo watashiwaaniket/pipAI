@@ -95,7 +95,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     let fullResponse = "";
 
-    await llamaService.generateStream(contextMessages, modelFamily, (token) => {
+    const stream = llamaService.generateStream(contextMessages, modelFamily, (token) => {
       fullResponse += token;
       set((s) => ({
         chats: s.chats.map((c) =>
@@ -112,6 +112,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         ),
       }));
     });
+
+    for await (const _ of stream) {
+      // generator yielded final text, but we already handled tokens
+    }
 
     const finalChat = get().getChat(chatId)!;
     const updatedChat: Chat = {

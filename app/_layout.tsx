@@ -9,6 +9,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useAppStore } from "@/stores/appStore";
 import { useModelStore } from "@/stores/modelStore";
+import { useChatStore } from "@/stores/chatStore";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -29,8 +30,10 @@ export default function RootLayout() {
   const segments = useSegments();
   const router = useRouter();
   const onboardingComplete = useAppStore((s) => s.onboardingComplete);
+  const activeModelId = useAppStore((s) => s.activeModelId);
   const initializeModels = useModelStore((s) => s.initialize);
   const verifyDownloads = useModelStore((s) => s.verifyDownloads);
+  const loadChats = useChatStore((s) => s.loadChats);
 
   useEffect(() => {
     setMounted(true);
@@ -44,15 +47,17 @@ export default function RootLayout() {
     if (mounted) {
       initializeModels();
       verifyDownloads();
+      loadChats();
 
       const subscription = AppState.addEventListener("change", (nextState) => {
         if (nextState === "active") {
           verifyDownloads();
+          loadChats();
         }
       });
       return () => subscription.remove();
     }
-  }, [mounted, initializeModels, verifyDownloads]);
+  }, [mounted, initializeModels, verifyDownloads, loadChats]);
 
   useEffect(() => {
     if (!mounted || !loaded) return;

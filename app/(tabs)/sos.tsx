@@ -7,12 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SignalCard } from "../../components/sos/SignalCard";
 import { ScanlineOverlay } from "../../components/terminal/ScanlineOverlay";
 import { SOS_CATEGORIES, SOS_DATA } from "../../data/sos";
 import { terminal as t } from "../../theme/terminal";
 
 export default function SOSScreen() {
+  const insets = useSafeAreaInsets();
   const [activeCategory, setActiveCategory] = useState("VISUAL");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     null,
@@ -36,7 +38,12 @@ export default function SOSScreen() {
   const filtered = SOS_DATA.filter((s) => s.category === activeCategory);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}
+    >
       <ScanlineOverlay />
       <Text style={styles.header}>╔══ EMERGENCY SIGNALS ══╗</Text>
       <Text style={styles.statusLine}>
