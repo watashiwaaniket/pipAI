@@ -7,9 +7,9 @@
     "icon": "./assets/images/icon.png",
     "scheme": "pipai",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hisukurifu01.pipAI"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +19,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.hisukurifu01.pipAI"
     },
     "web": {
       "output": "static",
