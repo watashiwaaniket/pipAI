@@ -1,6 +1,7 @@
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScanlineOverlay } from "../../components/terminal/ScanlineOverlay";
 import { useAppStore } from "../../stores/appStore";
 import { terminal } from "../../theme/terminal";
@@ -18,8 +19,9 @@ const BOOT_LINES = [
 ];
 
 export default function WelcomeScreen() {
+  const insets = useSafeAreaInsets();
   const [visibleLines, setVisibleLines] = useState<string[]>([]);
-  const { onboardingComplete } = useAppStore();
+  const onboardingComplete = useAppStore((s) => s.onboardingComplete);
 
   useEffect(() => {
     if (onboardingComplete) {
@@ -31,8 +33,7 @@ export default function WelcomeScreen() {
     const interval = setInterval(() => {
       if (i >= BOOT_LINES.length) {
         clearInterval(interval);
-        // pause then navigate to model selection
-        setTimeout(() => router.push("/onboarding/model-select" as any), 1200);
+        setTimeout(() => router.push("/onborading/model-select" as any), 1200);
         return;
       }
       setVisibleLines((prev) => [...prev, BOOT_LINES[i]]);
@@ -40,10 +41,15 @@ export default function WelcomeScreen() {
     }, 320);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [onboardingComplete]);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}
+    >
       <ScanlineOverlay />
       {visibleLines.map((line, idx) => (
         <Text key={idx} style={styles.line}>

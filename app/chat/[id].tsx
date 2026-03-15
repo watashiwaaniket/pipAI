@@ -4,7 +4,6 @@ import { ScanlineOverlay } from "@/components/terminal/ScanlineOverlay";
 import { TerminalInput } from "@/components/terminal/TerminalInput";
 import { useChat } from "@/hooks/useChat";
 import { useAppStore } from "@/stores/appStore";
-import { trimToContextWindow } from "@/services/context.service";
 import { terminal as t } from "@/theme/terminal";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -16,8 +15,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ChatScreen() {
+  const insets = useSafeAreaInsets();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [input, setInput] = useState("");
@@ -26,7 +27,7 @@ export default function ChatScreen() {
 
   if (!chat) {
     return (
-      <View style={styles.notFound}>
+      <View style={[styles.notFound, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
         <Text style={styles.notFoundText}>{">"} MISSION LOG NOT FOUND</Text>
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={styles.backText}>{"< [BACK]"}</Text>
@@ -49,9 +50,9 @@ export default function ChatScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={0}
+      keyboardVerticalOffset={Platform.OS === "ios" ? insets.top : 0}
     >
       <ScanlineOverlay />
 

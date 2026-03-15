@@ -67,13 +67,15 @@ async function ensureModelDir(): Promise<void> {
   }
 }
 
+export const EMPTY_META: PersistedModelMeta = {
+  isDownloaded: false,
+  localPath: null,
+  downloadedAt: null,
+  bytesOnDisk: 0,
+};
+
 function emptyMeta(): PersistedModelMeta {
-  return {
-    isDownloaded: false,
-    localPath: null,
-    downloadedAt: null,
-    bytesOnDisk: 0,
-  };
+  return EMPTY_META;
 }
 
 function buildModels(meta: Record<string, PersistedModelMeta>): ModelConfig[] {
@@ -459,4 +461,4 @@ export const selectLoadedModel = (s: ModelStore) =>
   s.models.find((m) => m.id === s.loadedModelId) ?? null;
 
 export const selectModelMeta = (modelId: string) => (s: ModelStore) =>
-  s.meta[modelId] ?? emptyMeta();
+  s.meta[modelId] ?? EMPTY_META;

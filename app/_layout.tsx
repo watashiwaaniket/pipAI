@@ -1,76 +1,88 @@
-import { llamaService } from "@/services/llama.service";
-import { selectIsReady, useAppStore } from "@/stores/appStore";
-import { useModelStore } from "@/stores/modelStore";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import { AppState, Platform, UIManager } from "react-native";
+import React, { useEffect, useState } from "react";
+import { AppState } from "react-native";
 import "react-native-reanimated";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
-if (Platform.OS === "android") {
-  UIManager.setLayoutAnimationEnabledExperimental?.(true);
-}
+import { useAppStore } from "@/stores/appStore";
+import { useModelStore } from "@/stores/modelStore";
 
-export const unstable_settings = {
-  anchor: "(tabs)",
+export {
+  // Catch any errors thrown by the Layout component.
+  ErrorBoundary,
+} from "expo-router";
+
+export const UNSTABLE_SETTINGS = {
+  // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: "onborading/welcome",
 };
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
-    ShareTechMono: require("../assets/fonts/ShareTechMono-Regular.ttf"),
+  const [loaded, error] = useFonts({
+    "Share Tech Mono": require("../assets/fonts/ShareTechMono-Regular.ttf"),
   });
 
-  const isReady = useAppStore(selectIsReady);
-  const onboardingComplete = useAppStore((s) => s.onboardingComplete);
-  const activeModelId = useAppStore((s) => s.activeModelId);
-  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const segments = useSegments();
+  const router = useRouter();
+  const onboardingComplete = useAppStore((s) => s.onboardingComplete);
+  const initializeModels = useModelStore((s) => s.initialize);
+  const verifyDownloads = useModelStore((s) => s.verifyDownloads);
 
   useEffect(() => {
-    useModelStore.getState().initialize();
+    setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!fontsLoaded) return;
-    const inOnboarding = segments[0] === "onborading";
-    if (!onboardingComplete && !inOnboarding) {
+    if (error) throw error;
+  }, [error]);
+
+  useEffect(() => {
+    if (mounted) {
+      initializeModels();
+      verifyDownloads();
+
+      const subscription = AppState.addEventListener("change", (nextState) => {
+        if (nextState === "active") {
+          verifyDownloads();
+        }
+      });
+      return () => subscription.remove();
+    }
+  }, [mounted, initializeModels, verifyDownloads]);
+
+  useEffect(() => {
+    if (!mounted || !loaded) return;
+
+    const inOnboardingGroup = segments[0] === "onborading";
+
+    if (!onboardingComplete && !inOnboardingGroup) {
       router.replace("/onborading/welcome");
+    } else if (onboardingComplete && inOnboardingGroup) {
+      router.replace("/(tabs)");
     }
-  }, [fontsLoaded, onboardingComplete, segments, router]);
+  }, [onboardingComplete, segments, loaded, mounted]);
 
-  useEffect(() => {
-    if (!isReady || !activeModelId) return;
-    const meta = useModelStore.getState().meta[activeModelId];
-    if (meta?.isDownloaded && meta.localPath) {
-      llamaService.loadModel(activeModelId, meta.localPath);
-    }
-  }, [isReady, activeModelId]);
-
-  useEffect(() => {
-    const sub = AppState.addEventListener("change", (state) => {
-      if (state === "active") {
-        useModelStore.getState().verifyDownloads();
-      }
-    });
-    return () => sub.remove();
-  }, []);
-
-  if (!fontsLoaded) return null;
+  if (!loaded && !error) return null;
 
   return (
-    <ThemeProvider value={DarkTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="onborading" options={{ headerShown: false }} />
-        <Stack.Screen name="chat/[id]" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="modal"
-          options={{ presentation: "modal", title: "Modal" }}
-        />
-      </Stack>
-      <StatusBar style="light" backgroundColor="#0A0A0A" />
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider value={DarkTheme}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: "fade",
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="onborading" options={{ headerShown: false }} />
+          <Stack.Screen name="chat/[id]" options={{ headerShown: false }} />
+        </Stack>
+        <StatusBar style="light" backgroundColor="#0A0A0A" />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

@@ -6,7 +6,7 @@ import { useChatStore } from "@/stores/chatStore";
 import { terminal as t } from "@/theme/terminal";
 import { Chat } from "@/types";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Alert,
   FlatList,
@@ -15,11 +15,15 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function IntelScreen() {
-  const chats = useChatStore((s) =>
-    [...s.chats].sort((a, b) => b.updatedAt - a.updatedAt),
-  );
+  const insets = useSafeAreaInsets();
+  const allChats = useChatStore((s) => s.chats);
+  const chats = useMemo(() => 
+    [...allChats].sort((a, b) => b.updatedAt - a.updatedAt),
+  [allChats]);
+  
   const deleteChat = useChatStore((s) => s.deleteChat);
   const activeModelId = useAppStore((s) => s.activeModelId);
   const router = useRouter();
@@ -80,7 +84,7 @@ export default function IntelScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <ScanlineOverlay />
       <PipStatusBar title="INTEL" modelName={activeModel?.name} />
 

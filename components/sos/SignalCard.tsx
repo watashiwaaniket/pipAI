@@ -25,9 +25,8 @@ import {
 import type { SOSSignal } from "../../data/sos";
 import { terminal as t } from "../../theme/terminal";
 
-if (Platform.OS === "android") {
-  UIManager.setLayoutAnimationEnabledExperimental?.(true);
-}
+// LayoutAnimation is handled automatically in the New Architecture
+// or can be removed if performance/threading issues occur.
 
 const CATEGORY_GLYPH: Record<string, string> = {
   VISUAL: "[*]",

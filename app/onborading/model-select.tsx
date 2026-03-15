@@ -2,28 +2,38 @@ import * as Device from "expo-device";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScanlineOverlay } from "../../components/terminal/ScanlineOverlay";
 import { AVAILABLE_MODELS, MODEL_TIERS } from "../../constants/models";
+import { useAppStore } from "../../stores/appStore";
 import { useModelStore } from "../../stores/modelStore";
 import { terminal } from "../../theme/terminal";
 
 export default function ModelSelectScreen() {
+  const insets = useSafeAreaInsets();
   const [selected, setSelected] = useState<"light" | "heavy" | null>(null);
   const { startDownload } = useModelStore();
+  const completeOnboarding = useAppStore((s: any) => s.completeOnboarding);
 
-  // suggest tier based on device RAM
   const ramGB = (Device.totalMemory ?? 0) / 1_073_741_824;
   const recommended: "light" | "heavy" = ramGB >= 6 ? "heavy" : "light";
 
   const handleConfirm = async () => {
     if (!selected) return;
     const tier = MODEL_TIERS[selected];
+    completeOnboarding(selected, tier.modelId);
     await startDownload(tier.modelId);
     router.replace("/(tabs)");
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={[
+        styles.content,
+        { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 20 },
+      ]}
+    >
       <ScanlineOverlay />
 
       <Text style={styles.header}>╔══ SELECT INTELLIGENCE MODULE ══╗</Text>

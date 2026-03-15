@@ -17,8 +17,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
+  const insets = useSafeAreaInsets();
   const models = useModelStore((s) => s.models);
   const lastError = useModelStore((s) => s.lastError);
   const clearError = useModelStore((s) => s.clearError);
@@ -54,7 +56,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <ScanlineOverlay />
       <PipStatusBar title="CONFIG" modelName={activeModel?.name} />
 
