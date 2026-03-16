@@ -1,50 +1,95 @@
-# Welcome to your Expo app 👋
+# PIP-AI: Personal Information Processor 📟
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Expo](https://img.shields.io/badge/Expo-000000?style=flat&logo=expo&logoColor=white)](https://expo.dev)
 
-## Get started
+**PIP-AI** is a fully offline, privacy-first AI companion inspired by retro-futuristic terminal aesthetics. Built with React Native and powered by `llama.cpp` (via `llama.rn`), it allows you to run powerful Large Language Models directly on your mobile device without any internet connection.
 
-1. Install dependencies
+> [!IMPORTANT]
+> This is a fully offline build. Your data never leaves your device.
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## 🚀 Quick Start (Android APK)
 
-   ```bash
-   npx expo start
-   ```
+Download the latest standalone APK and install it directly on your Android device.
 
-In the output, you'll find options to open the app in a
+**[Download PIP-AI v1.0.0 (Alpha) APK](https://expo.dev/accounts/hisukurifu01/projects/pipAI/builds/bb4984ca-88e7-4316-b210-c578ecb06f32)**
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## ✨ Features
 
-## Get a fresh project
+- **📟 Terminal Interface**: A high-fidelity retro CRT aesthetic with scanlines, typewriter effects, and mono-spaced fonts.
+- **🧠 Local Inference**: Run GGUF models (Gemma, Llama 3, etc.) locally on your phone's CPU/NPU.
+- **🛰️ SOS Signals**: Integrated emergency visual signal protocols (SOS, Signal Mirrors, Morse code codes).
+- **🔒 Privacy First**: No tracking, no telemetry, no cloud.
+- **💬 Persistent Memory**: Full chat history stored locally via encrypted storage.
+- **🛠️ Configurable Engine**: Tweak temperature, context window, and model tiers directly from the `CONFIG` panel.
 
-When you're ready, run:
+---
 
+## 🛠️ Tech Stack & Dependencies
+
+PIP-AI is built on top of the following amazing open-source projects:
+
+- **Core**: [React Native](https://reactnative.dev/) & [Expo](https://expo.dev/)
+- **Native AI Engine**: [llama.rn](https://github.com/mybigday/llama.rn) (based on [llama.cpp](https://github.com/ggerganov/llama.cpp))
+- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
+- **Navigation**: [Expo Router](https://docs.expo.dev/router/introduction/)
+- **Styling**: [NativeWind](https://www.nativewind.dev/) (Tailwind CSS for React Native)
+- **Storage**: [AsyncStorage](https://react-native-async-storage.github.io/async-storage/)
+- **Icons**: [@expo/vector-icons](https://icons.expo.fyi/)
+
+---
+
+## 📦 Developer Setup
+
+If you want to build PIP-AI from source, follow these steps:
+
+### 1. Prerequisites
+- Node.js (v18+)
+- Homebrew (macOS)
+- Android Studio & SDK
+
+### 2. Install Native Requirements
 ```bash
-npm run reset-project
+brew install openjdk@17
+# Link OpenJDK
+sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 3. Installation
+```bash
+git clone https://github.com/yourusername/pipAI.git
+cd pipAI
+npm install
+```
 
-## Learn more
+### 4. Running
+To run with native AI support, you MUST use a Development Build or standalone build:
+```bash
+# Build & Run on Android
+npx expo run:android
 
-To learn more about developing your project with Expo, look at the following resources:
+# Build Standalone APK via EAS
+eas build --platform android --profile preview
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## 🤝 Contributing
 
-Join our community of developers creating universal apps.
+Contributions are welcome! Please check our **[CONTRIBUTING.md](./CONTRIBUTING.md)** for guidelines on how to get started.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## ⚖️ License & Credits
+
+- Licensed under the **MIT License**.
+- Aesthetics inspired by various retro-futuristic 80s/90s sci-fi terminals.
+- Developed by **[@astriknormal](https://github.com/astriknormal)**.
+
+---
+
+*“Information is the ultimate survival tool.”*
